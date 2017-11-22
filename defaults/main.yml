@@ -1,0 +1,20 @@
+---
+# defaults file for zabbix-common
+
+# Simple placeholder to allow other roles to detect this role
+zabbix_common__role: True
+
+###
+# Theses two variables must be defined by the caller role
+# Which version to install (if it is possible)
+#zabbix_common__version:
+
+# Which package to install at the end
+#zabbix_common__packages_name:
+###
+
+# URL from which to retrieve the release package
+#zabbix_common__release_package_url:
+
+# Name of the package which contains package repository and gpg keys of zabbix
+zabbix_common__release_package_name: zabbix-release

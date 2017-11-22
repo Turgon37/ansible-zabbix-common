@@ -1,0 +1,8 @@
+---
+
+zabbix_common__package_release_url: 'https://repo.zabbix.com/zabbix/{{ zabbix_common__version }}/rhel/{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/{{ zabbix_common__package_release_url_map[ansible_distribution_major_version|int] }}'
+
+zabbix_common__package_release_url_map:
+  7: zabbix-release-3.4-2.el7.noarch.rpm
+  6: zabbix-release-3.4-1.el6.noarch.rpm
+  5: zabbix-release-3.4-1.noarch.rpm
