@@ -5,7 +5,7 @@
     name:   '{{ zabbix_common__service_group }}'
     system: yes
     state:  present
-  notify: [ '{{ zabbix_common__service_handler|d(omit) }}' ]
+  notify: [ 'zabbix-service-handler' ]
 
 - name: "Ensure service user '{{ zabbix_common__service_user }}' is present (first try)"
   user:
@@ -16,7 +16,7 @@
     createhome: no
     system:     yes
     state:      present
-  notify: [ '{{ zabbix_common__service_handler|d(omit) }}' ]
+  notify: [ 'zabbix-service-handler' ]
   register: _zabbix_common__service_user_changed
   ignore_errors: True
 
@@ -35,7 +35,7 @@
     createhome: no
     system:     yes
     state:      present
-  notify: [ '{{ zabbix_common__service_handler|d(omit) }}' ]
+  notify: [ 'zabbix-service-handler' ]
   when: zabbix_common__service_name is defined and _zabbix_common__service_user_changed|failed
 
 - name: Start zabbix service after user update
@@ -51,7 +51,7 @@
     group: '{{ zabbix_common__service_group }}'
     state: directory
     mode:  0700
-  notify: [ '{{ zabbix_common__service_handler|d(omit) }}' ]
+  notify: [ 'zabbix-service-handler' ]
 
 - name: Make sure the log directory exists
   file:
@@ -60,11 +60,11 @@
     group: '{{ zabbix_common__service_group }}'
     state: directory
     mode:  0755
-  notify: [ '{{ zabbix_common__service_handler|d(omit) }}' ]
+  notify: [ 'zabbix-service-handler' ]
 
 - name: Make sure the configuration directory exists
   file:
     path:  '{{ zabbix_common__conf_directory }}'
     state: directory
     mode:  0755
-  notify: [ '{{ zabbix_common__service_handler|d(omit) }}' ]
+  notify: [ 'zabbix-service-handler' ]
