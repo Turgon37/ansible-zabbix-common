@@ -18,3 +18,19 @@ zabbix_common__role: True
 
 # Name of the package which contains package repository and gpg keys of zabbix
 zabbix_common__release_package_name: zabbix-release
+
+# Location of var directory for zabbix
+zabbix_common__var_directory: /var/lib/zabbix
+# Location of logs for zabbix
+zabbix_common__log_directory: /var/log/zabbix
+
+# User to run zabbix as
+zabbix_common__service_user: zabbix
+# Group to run zabbix as
+zabbix_common__service_group: '{{ zabbix_common__service_user }}'
+
+# Name of optional handler to notify
+#zabbix_common__service_handler:
+
+# Configuration directory
+zabbix_common__conf_directory: /etc/zabbix

@@ -14,3 +14,6 @@
 
 - import_tasks: install.yml
   tags: ['zabbix-common', 'zabbix-common-install']
+
+- import_tasks: configure.yml
+  tags: ['zabbix-common', 'zabbix-common-configure']

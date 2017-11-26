@@ -1,0 +1,44 @@
+---
+
+- name: "Ensure service group '{{ zabbix_common__service_group }}' is present"
+  group:
+    name:   '{{ zabbix_common__service_group }}'
+    system: yes
+    state:  present
+  notify: [ '{{ zabbix_common__service_handler|d(omi) }}' ]
+
+- name: "Ensure service user '{{ zabbix_common__service_user }}' is present"
+  user:
+    name:       '{{ zabbix_common__service_user }}'
+    group:      '{{ zabbix_common__service_group }}'
+    shell:      /sbin/nologin
+    home:       '{{ zabbix_common__var_directory }}'
+    createhome: no
+    system:     yes
+    state:      present
+  notify: [ '{{ zabbix_common__service_handler|d(omi) }}' ]
+
+- name: Make sure the var directory exists
+  file:
+    path:  '{{ zabbix_common__var_directory }}'
+    owner: '{{ zabbix_common__service_user }}'
+    group: '{{ zabbix_common__service_group }}'
+    state: directory
+    mode:  0700
+  notify: [ '{{ zabbix_common__service_handler|d(omi) }}' ]
+
+- name: Make sure the log directory exists
+  file:
+    path:  '{{ zabbix_common__log_directory }}'
+    owner: '{{ zabbix_common__service_user }}'
+    group: '{{ zabbix_common__service_group }}'
+    state: directory
+    mode:  0755
+  notify: [ '{{ zabbix_common__service_handler|d(omi) }}' ]
+
+- name: Make sure the configuration directory exists
+  file:
+    path:  '{{ zabbix_common__conf_directory }}'
+    state: directory
+    mode:  0755
+  notify: [ '{{ zabbix_common__service_handler|d(omi) }}' ]
