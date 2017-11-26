@@ -1,0 +1,7 @@
+---
+# handlers file for zabbix-agent
+
+- name: zabbix-service-handler
+  command: /bin/true
+  when: zabbix_common__service_handler is defined
+  notify: ['{{ zabbix_common__service_handler }}']
