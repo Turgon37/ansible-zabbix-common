@@ -5,7 +5,7 @@
     name:   '{{ zabbix_common__service_group }}'
     system: yes
     state:  present
-  notify: [ '{{ zabbix_common__service_handler|d(omi) }}' ]
+  notify: [ '{{ zabbix_common__service_handler|d(omit) }}' ]
 
 - name: "Ensure service user '{{ zabbix_common__service_user }}' is present"
   user:
@@ -16,7 +16,7 @@
     createhome: no
     system:     yes
     state:      present
-  notify: [ '{{ zabbix_common__service_handler|d(omi) }}' ]
+  notify: [ '{{ zabbix_common__service_handler|d(omit) }}' ]
 
 - name: Make sure the var directory exists
   file:
@@ -25,7 +25,7 @@
     group: '{{ zabbix_common__service_group }}'
     state: directory
     mode:  0700
-  notify: [ '{{ zabbix_common__service_handler|d(omi) }}' ]
+  notify: [ '{{ zabbix_common__service_handler|d(omit) }}' ]
 
 - name: Make sure the log directory exists
   file:
@@ -34,11 +34,11 @@
     group: '{{ zabbix_common__service_group }}'
     state: directory
     mode:  0755
-  notify: [ '{{ zabbix_common__service_handler|d(omi) }}' ]
+  notify: [ '{{ zabbix_common__service_handler|d(omit) }}' ]
 
 - name: Make sure the configuration directory exists
   file:
     path:  '{{ zabbix_common__conf_directory }}'
     state: directory
     mode:  0755
-  notify: [ '{{ zabbix_common__service_handler|d(omi) }}' ]
+  notify: [ '{{ zabbix_common__service_handler|d(omit) }}' ]
