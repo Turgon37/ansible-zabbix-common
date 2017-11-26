@@ -7,7 +7,7 @@
     state:  present
   notify: [ '{{ zabbix_common__service_handler|d(omit) }}' ]
 
-- name: "Ensure service user '{{ zabbix_common__service_user }}' is present"
+- name: "Ensure service user '{{ zabbix_common__service_user }}' is present (first try)"
   user:
     name:       '{{ zabbix_common__service_user }}'
     group:      '{{ zabbix_common__service_group }}'
@@ -17,6 +17,32 @@
     system:     yes
     state:      present
   notify: [ '{{ zabbix_common__service_handler|d(omit) }}' ]
+  register: _zabbix_common__service_user_changed
+  ignore_errors: True
+
+- name: Stop zabbix service before user update
+  service:
+    name:  '{{ zabbix_common__service_name }}'
+    state: stopped
+  when: zabbix_common__service_name is defined and _zabbix_common__service_user_changed|failed
+
+- name: "Ensure service user '{{ zabbix_common__service_user }}' is present (second try)"
+  user:
+    name:       '{{ zabbix_common__service_user }}'
+    group:      '{{ zabbix_common__service_group }}'
+    shell:      /sbin/nologin
+    home:       '{{ zabbix_common__var_directory }}'
+    createhome: no
+    system:     yes
+    state:      present
+  notify: [ '{{ zabbix_common__service_handler|d(omit) }}' ]
+  when: zabbix_common__service_name is defined and _zabbix_common__service_user_changed|failed
+
+- name: Start zabbix service after user update
+  service:
+    name:  '{{ zabbix_common__service_name }}'
+    state: started
+  when: zabbix_common__service_name is defined and _zabbix_common__service_user_changed|failed
 
 - name: Make sure the var directory exists
   file:
