@@ -5,3 +5,8 @@
   command: /bin/true
   when: zabbix_common__service_handler is defined
   notify: ['{{ zabbix_common__service_handler }}']
+
+- name: restart-zabbix-agent-userparameter
+  service:
+    name:  "{{ zabbix_agent__service_name|d('zabbix-agent') }}"
+    state: restarted
