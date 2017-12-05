@@ -10,6 +10,5 @@
 {% if userparameter.comment is defined %}
 # {{ userparameter.comment }}
 {% endif %}
-UserParameter={{ userparameter.key }},{% if userparameter.sudo|d(False)|bool %}sudo {% endif %}{{ userparameter.command -}}
-
+UserParameter={{ userparameter.key }},{% if userparameter.sudo|d(False)|bool %}sudo {% endif %}{{ userparameter.command }}
 {% endfor %}
