@@ -1,0 +1,26 @@
+---
+
+- fail:
+    msg: You must pass the variable zabbix_common__userparameter with rule specifications
+  when: zabbix_common__userparameter is not defined
+
+- name: Ensure userparameters directory exists
+  file:
+    path:  '{{ zabbix_common__userparameters_directory }}'
+    mode:  0755
+    state: directory
+
+- name: 'Create userparameter {{ zabbix_common__userparameter.name }}'
+  template:
+    src:      userparameter.j2
+    dest:     "{{ zabbix_common__userparameters_directory }}/{{ zabbix_common__userparameter.name }}"
+    owner:    root
+    group:    root
+    mode:     0440
+  when: zabbix_common__userparameter.state|d('present') == 'present'
+
+- name: 'Remove userparameter {{ zabbix_common__userparameter.name }}'
+  file:
+    path:  "{{ zabbix_common__userparameters_directory }}/{{ zabbix_common__userparameter.name }}"
+    state: absent
+  when: zabbix_common__userparameter.state|d('present') != 'present'
