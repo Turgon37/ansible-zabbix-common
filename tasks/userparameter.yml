@@ -1,6 +1,7 @@
 ---
 
-- fail:
+- name: Check if zabbix_common__userparameter is defined
+  fail:
     msg: You must pass the variable zabbix_common__userparameter with rule specifications
   when: zabbix_common__userparameter is not defined
 
