@@ -37,3 +37,12 @@ zabbix_common__conf_directory: /etc/zabbix
 
 # directory for userparameters
 zabbix_common__userparameters_directory: '{{ zabbix_common__conf_directory }}/userparameters.d'
+
+# List of package to install if you use snmp
+zabbix_common__snmp_packages: []
+
+# Directory where to save
+zabbix_common__mibs_directory: /usr/share/snmp/mibs/
+
+# List of MIBS folder to install from files/mibs to the host
+zabbix_common__mibs_install: []

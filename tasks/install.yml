@@ -10,3 +10,10 @@
         - 'install-{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml'
         - 'install-{{ ansible_distribution }}.yml'
         - 'install-{{ ansible_os_family }}.yml'
+
+- name: Install SNMP packages
+  package:
+    name:  '{{ item }}'
+    state: present
+  with_items: '{{ zabbix_common__snmp_packages }}'
+  when: zabbix_common__mibs_install|length > 0
