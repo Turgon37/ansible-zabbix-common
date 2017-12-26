@@ -77,16 +77,21 @@
   when: zabbix_common__userparameters_directory is defined
   notify: [ 'zabbix-service-handler' ]
 
-- name: Ensure SNMP MIBS directory exists
-  file:
+- name: Test if SNMP MIBS directory exists
+  stat:
     path:  '{{ zabbix_common__mibs_directory }}'
-    mode:  0755
-    state: directory
   when: zabbix_common__mibs_install|length > 0
-  notify: [ 'zabbix-service-handler' ]
+  register: _zabbix_common__mibs_directory
+  
+- name: Fail if SNMP MIBS directory is absent
+  fail:
+  when: zabbix_common__mibs_install|length > 0 and (
+          (not _zabbix_common__mibs_directory.stat.exists) or
+          (not _zabbix_common__mibs_directory.stat.isdir|d(False))
+        )
 
 - name: Copy SNMP MIBS files
-    copy:
+  copy:
     src:   'mibs/{{ item }}/'
     dest:  '{{ zabbix_common__mibs_directory }}'
     owner: root
