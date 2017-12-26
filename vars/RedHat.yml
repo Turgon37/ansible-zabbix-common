@@ -6,6 +6,3 @@ zabbix_common__package_release_url_map:
   7: zabbix-release-3.4-2.el7.noarch.rpm
   6: zabbix-release-3.4-1.el6.noarch.rpm
   5: zabbix-release-3.4-1.noarch.rpm
-
-zabbix_common__snmp_packages:
-  - net-snmp-libs
