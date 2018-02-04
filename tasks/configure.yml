@@ -68,11 +68,3 @@
     state: directory
     mode:  0755
   notify: [ 'zabbix-service-handler' ]
-
-- name: Ensure userparameters directory exists
-  file:
-    path:  '{{ zabbix_common__userparameters_directory }}'
-    mode:  0755
-    state: directory
-  when: zabbix_common__userparameters_directory is defined
-  notify: [ 'zabbix-service-handler' ]
