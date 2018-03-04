@@ -15,8 +15,8 @@
   set_fact:
     _zabbix_common__apt_need_package: True
   when: "_zabbix_common__apt_check_package|failed or
-        ( not _zabbix_common__apt_check_package.stdout|search('^Status: install ok installed') ) or
-        ( not _zabbix_common__apt_check_package.stdout|search('^Version: 1:'~zabbix_common__version) )"
+        ( not _zabbix_common__apt_check_package.stdout|search('Status: install ok installed') ) or
+        ( not _zabbix_common__apt_check_package.stdout|search('Version: 1:'~zabbix_common__version) )"
 
 - name: 'Check if {{ zabbix_common__packages_name }} package is available in current repositories'
   command: apt search {{ zabbix_common__packages_name }}
@@ -40,7 +40,7 @@
     state: absent
   when: _zabbix_common__apt_need_repository|d(False)|bool
 
-- name: Install zabbix repository configurations files
+- name: Install zabbix repository
   apt:
     deb:          '{{ zabbix_common__package_release_url }}'
     state:        present
