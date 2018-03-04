@@ -1,0 +1,64 @@
+---
+
+- fail:
+    msg: Unsupported package manager
+  when: ansible_pkg_mgr != 'apt'
+
+- name: 'Check if {{ zabbix_common__packages_name }} package is installed'
+  shell: "dpkg-query --status {{ zabbix_common__packages_name }} | grep --extended-regexp '(^Status: install ok installed|^Version)'"
+  register: _zabbix_common__apt_check_package
+  check_mode: no
+  changed_when: False
+  failed_when: _zabbix_common__apt_check_package.rc not in [0, 1]
+
+- name: Compute the package needed condition
+  set_fact:
+    _zabbix_common__apt_need_package: True
+  when: "_zabbix_common__apt_check_package|failed or
+        ( not _zabbix_common__apt_check_package.stdout|search('^Status: install ok installed') ) or
+        ( not _zabbix_common__apt_check_package.stdout|search('^Version: '~zabbix_common__version) )"
+
+- name: 'Check if {{ zabbix_common__packages_name }} package is available in current repositories'
+  command: apt search {{ zabbix_common__packages_name }}
+  when: _zabbix_common__apt_need_package|d(False)|bool
+  register: _zabbix_common__apt_check_repository
+  check_mode: no
+  changed_when: False
+  failed_when: _zabbix_common__apt_check_repository.rc != 0
+
+- name: Compute the repository needed condition
+  set_fact:
+    _zabbix_common__apt_need_repository: True
+  when: _zabbix_common__apt_need_package|d(False)|bool and (
+          _zabbix_common__apt_check_repository|failed or
+          (not _zabbix_common__apt_check_repository.stdout|search(zabbix_common__packages_name~'[^ ]+ 1:'~zabbix_common__version))
+        )
+
+- name: Remove old release package
+  apt:
+    name:  '{{ zabbix_common__release_package_name }}'
+    state: absent
+  when: _zabbix_common__apt_need_repository|d(False)|bool
+
+- name: Install zabbix repository configurations files
+  apt:
+    deb:          '{{ zabbix_common__package_release_url }}'
+    state:        present
+  when: _zabbix_common__apt_need_repository|d(False)|bool
+  register: _zabbix_common__apt_repo_update
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  when: _zabbix_common__apt_repo_update|changed
+
+- name: Remove old target package
+  apt:
+    name:  '{{ zabbix_common__packages_name }}'
+    state: absent
+  when: _zabbix_common__apt_need_package|d(False)|bool
+
+- name: 'Install {{ zabbix_common__packages_name }} package'
+  apt:
+    name:  '{{ zabbix_common__packages_name }}=1:{{ zabbix_common__version }}*'
+    state: present
