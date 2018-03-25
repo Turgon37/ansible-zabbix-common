@@ -24,7 +24,7 @@
   service:
     name:  '{{ zabbix_common__service_name }}'
     state: stopped
-  when: zabbix_common__service_name is defined and _zabbix_common__service_user_changed|failed
+  when: zabbix_common__service_name is defined and _zabbix_common__service_user_changed is failed
 
 - name: "Ensure service user '{{ zabbix_common__service_user }}' is present (second try)"
   user:
@@ -36,13 +36,13 @@
     system:     yes
     state:      present
   notify: [ 'zabbix-service-handler' ]
-  when: zabbix_common__service_name is defined and _zabbix_common__service_user_changed|failed
+  when: zabbix_common__service_name is defined and _zabbix_common__service_user_changed is failed
 
 - name: Start zabbix service after user update
   service:
     name:  '{{ zabbix_common__service_name }}'
     state: started
-  when: zabbix_common__service_name is defined and _zabbix_common__service_user_changed|failed
+  when: zabbix_common__service_name is defined and _zabbix_common__service_user_changed is failed
 
 - name: Make sure the var directory exists
   file:
