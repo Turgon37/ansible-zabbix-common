@@ -3,6 +3,7 @@
 - fail:
     msg: Unsupported package manager
   when: ansible_pkg_mgr != 'apt'
+  tags: ['always']
 
 - name: 'Check if {{ zabbix_common__packages_name }} package is installed'
   shell: "dpkg-query --status {{ zabbix_common__packages_name }} | grep --extended-regexp '(^Status: install ok installed|^Version)'"
@@ -10,13 +11,15 @@
   check_mode: no
   changed_when: False
   failed_when: _zabbix_common__apt_check_package.rc not in [0, 1]
+  tags: ['zabbix-common', 'zabbix-common-install']
 
 - name: Compute the package needed condition
   set_fact:
     _zabbix_common__apt_need_package: True
-  when: "_zabbix_common__apt_check_package|failed or
-        ( not _zabbix_common__apt_check_package.stdout|search('Status: install ok installed') ) or
-        ( not _zabbix_common__apt_check_package.stdout|search('Version: 1:'~zabbix_common__version) )"
+  when: "_zabbix_common__apt_check_package is failed or
+        ( not _zabbix_common__apt_check_package.stdout is search('Status: install ok installed') ) or
+        ( not _zabbix_common__apt_check_package.stdout is search('Version: 1:'~zabbix_common__version) )"
+  tags: ['zabbix-common', 'zabbix-common-install']
 
 - name: 'Check if {{ zabbix_common__packages_name }} package is available in current repositories'
   command: apt search {{ zabbix_common__packages_name }}
@@ -25,20 +28,22 @@
   check_mode: no
   changed_when: False
   failed_when: _zabbix_common__apt_check_repository.rc != 0
+  tags: ['zabbix-common', 'zabbix-common-install']
 
 - name: Compute the repository needed condition
   set_fact:
     _zabbix_common__apt_need_repository: True
-  when: _zabbix_common__apt_need_package|d(False)|bool and (
-          _zabbix_common__apt_check_repository|failed or
-          (not _zabbix_common__apt_check_repository.stdout|search(zabbix_common__packages_name~'[^ ]+ 1:'~zabbix_common__version))
-        )
+  when: "_zabbix_common__apt_need_package|d(False)|bool and (
+          _zabbix_common__apt_check_repository is failed or
+          (not _zabbix_common__apt_check_repository.stdout is search(zabbix_common__packages_name~'[^ ]+ 1:'~zabbix_common__version))
+        )"
 
 - name: Remove old release package
   apt:
     name:  '{{ zabbix_common__release_package_name }}'
     state: absent
   when: _zabbix_common__apt_need_repository|d(False)|bool
+  tags: ['zabbix-common', 'zabbix-common-install']
 
 - name: Install zabbix repository
   apt:
@@ -46,19 +51,23 @@
     state:        present
   when: _zabbix_common__apt_need_repository|d(False)|bool
   register: _zabbix_common__apt_repo_update
+  tags: ['zabbix-common', 'zabbix-common-install']
 
 - name: Update apt cache
   apt:
     update_cache: yes
-  when: _zabbix_common__apt_repo_update|changed
+  when: _zabbix_common__apt_repo_update is changed
+  tags: ['zabbix-common', 'zabbix-common-install']
 
 - name: Remove old target package
   apt:
     name:  '{{ zabbix_common__packages_name }}'
     state: absent
   when: _zabbix_common__apt_need_package|d(False)|bool
+  tags: ['zabbix-common', 'zabbix-common-install']
 
 - name: 'Install {{ zabbix_common__packages_name }} package'
   apt:
     name:  '{{ zabbix_common__packages_name }}=1:{{ zabbix_common__version }}*'
     state: present
+  tags: ['zabbix-common', 'zabbix-common-install']
