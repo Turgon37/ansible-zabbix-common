@@ -1,5 +1,5 @@
 ---
-- debug: var=ansible_architecture
+
 - name: Run the OS specific install tasks (failed if not supported)
   include_tasks: '{{ item }}'
   with_first_found:
