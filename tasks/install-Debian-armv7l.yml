@@ -1,0 +1,11 @@
+---
+
+- fail:
+    msg: Unsupported package manager
+  when: ansible_pkg_mgr != 'apt'
+
+- name: 'Install {{ zabbix_common__packages_name }} package'
+  apt:
+    name:  '{{ zabbix_common__packages_name }}=1:{{ zabbix_agent__version }}*'
+    force: yes
+    state: present
