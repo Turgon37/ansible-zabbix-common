@@ -7,3 +7,4 @@
         - 'install-{{ ansible_distribution }}-{{ ansible_architecture }}.yml'
         - 'install-{{ ansible_lsb.id|d(ansible_distribution) }}.yml'
         - 'install-{{ ansible_os_family }}-{{ ansible_architecture }}.yml'
+  when: zabbix_common__install|bool

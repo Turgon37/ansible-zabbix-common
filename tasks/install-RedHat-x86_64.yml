@@ -17,7 +17,7 @@
 - name: Compute the package needed condition
   set_fact:
     _zabbix_common__rpm_need_package: True
-  when: _zabbix_common__rpm_check_package|failed or
+  when: _zabbix_common__rpm_check_package is failed or
         _zabbix_common__rpm_check_package.stdout is search('is not installed') or
         (not _zabbix_common__rpm_check_package.stdout is search(zabbix_common__packages_name~'-'~zabbix_common__version))
   tags: ['zabbix-common', 'zabbix-common-install']

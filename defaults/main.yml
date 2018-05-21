@@ -34,3 +34,6 @@ zabbix_common__service_group: '{{ zabbix_common__service_user }}'
 
 # Configuration directory
 zabbix_common__conf_directory: /etc/zabbix
+
+# Set to True to allow this role to install caller role's package
+zabbix_common__install: True
