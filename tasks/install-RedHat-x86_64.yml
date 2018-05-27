@@ -8,8 +8,9 @@
 - name: 'Check if {{ zabbix_common__packages_name }} package is installed'
   command: rpm --query {{ zabbix_common__packages_name }}
   register: _zabbix_common__rpm_check_package
-  check_mode: no
+  check_mode: False
   changed_when: False
+  warn: False
   failed_when: _zabbix_common__rpm_check_package.rc != 0 and 
           (not _zabbix_common__rpm_check_package.stdout is search('is not installed'))
   tags: ['zabbix-common', 'zabbix-common-install']
