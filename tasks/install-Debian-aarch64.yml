@@ -7,7 +7,7 @@
 
 - name: 'Install {{ zabbix_common__packages_name }} package'
   apt:
-    name:  '{{ zabbix_common__packages_name }}'
+    name: '{{ zabbix_common__packages_name }}'
     force: yes
     state: present
   tags: ['zabbix-common', 'zabbix-common-install']

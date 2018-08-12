@@ -8,11 +8,12 @@
 - name: 'Check if {{ zabbix_common__packages_name }} package is installed'
   command: rpm --query {{ zabbix_common__packages_name }}
   register: _zabbix_common__rpm_check_package
-  check_mode: False
-  changed_when: False
-  warn: False
+  check_mode: false
+  changed_when: false
+  args:
+    warn: false
   failed_when: _zabbix_common__rpm_check_package.rc != 0 and 
-          (not _zabbix_common__rpm_check_package.stdout is search('is not installed'))
+      (not _zabbix_common__rpm_check_package.stdout is search('is not installed'))
   tags: ['zabbix-common', 'zabbix-common-install']
 
 - name: Compute the package needed condition
@@ -27,15 +28,15 @@
   command: yum list --quiet --assumeno --color=never {{ zabbix_common__packages_name }}-{{ zabbix_common__version }}*
   when: _zabbix_common__rpm_need_package|d(False)|bool
   register: _zabbix_common__rpm_check_repository
-  check_mode: no
-  changed_when: False
+  check_mode: false
+  changed_when: false
   failed_when: _zabbix_common__rpm_check_repository.rc != 0 and
           (not _zabbix_common__rpm_check_repository.stderr is search('No matching Packages to list'))
   tags: ['zabbix-common', 'zabbix-common-install']
 
 - name: Compute the repository needed condition
   set_fact:
-    _zabbix_common__rpm_need_repository: True
+    _zabbix_common__rpm_need_repository: true
   when: _zabbix_common__rpm_need_package|d(False)|bool and (
           _zabbix_common__rpm_check_repository is failed or
           _zabbix_common__rpm_check_repository.stdout is search('Error.*No matching Packages to list') or
@@ -45,16 +46,16 @@
 
 - name: Remove old release package
   yum:
-    name:  '{{ zabbix_common__release_package_name }}'
+    name: '{{ zabbix_common__release_package_name }}'
     state: absent
   when: _zabbix_common__rpm_need_repository|d(False)|bool
   tags: ['zabbix-common', 'zabbix-common-install']
 
 - name: Install zabbix repository configurations files
   yum:
-    name:         '{{ zabbix_common__package_release_url }}'
-    update_cache: yes
-    state:        present
+    name: '{{ zabbix_common__package_release_url }}'
+    update_cache: true
+    state: present
   when: _zabbix_common__rpm_need_repository|d(False)|bool
   register: _zabbix_common__rpm_repo_update
   tags: ['zabbix-common', 'zabbix-common-install']
@@ -66,13 +67,13 @@
 
 - name: Remove old target package
   yum:
-    name:  '{{ zabbix_common__packages_name }}'
+    name: '{{ zabbix_common__packages_name }}'
     state: absent
   when: _zabbix_common__rpm_need_package|d(False)|bool
   tags: ['zabbix-common', 'zabbix-common-install']
 
 - name: 'Install {{ zabbix_common__packages_name }} package'
   yum:
-    name:  '{{ zabbix_common__packages_name }}-{{ zabbix_common__version }}*'
+    name: '{{ zabbix_common__packages_name }}-{{ zabbix_common__version }}*'
     state: present
   tags: ['zabbix-common', 'zabbix-common-install']

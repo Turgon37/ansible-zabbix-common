@@ -8,8 +8,8 @@
 - name: 'Check if {{ zabbix_common__packages_name }} package is installed'
   shell: "dpkg-query --status {{ zabbix_common__packages_name }} | grep --extended-regexp '(^Status: install ok installed|^Version)'"
   register: _zabbix_common__apt_check_package
-  check_mode: no
-  changed_when: False
+  check_mode: false
+  changed_when: false
   failed_when: _zabbix_common__apt_check_package.rc not in [0, 1]
   tags: ['zabbix-common', 'zabbix-common-install']
 
@@ -25,8 +25,8 @@
   command: apt search {{ zabbix_common__packages_name }}
   when: _zabbix_common__apt_need_package|d(False)|bool
   register: _zabbix_common__apt_check_repository
-  check_mode: no
-  changed_when: False
+  check_mode: false
+  changed_when: false
   failed_when: _zabbix_common__apt_check_repository.rc != 0
   tags: ['zabbix-common', 'zabbix-common-install']
 
@@ -40,34 +40,34 @@
 
 - name: Remove old release package
   apt:
-    name:  '{{ zabbix_common__release_package_name }}'
+    name: '{{ zabbix_common__release_package_name }}'
     state: absent
   when: _zabbix_common__apt_need_repository|d(False)|bool
   tags: ['zabbix-common', 'zabbix-common-install']
 
 - name: Install zabbix repository
   apt:
-    deb:          '{{ zabbix_common__package_release_url }}'
-    state:        present
+    deb: '{{ zabbix_common__package_release_url }}'
+    state: present
   when: _zabbix_common__apt_need_repository|d(False)|bool
   register: _zabbix_common__apt_repo_update
   tags: ['zabbix-common', 'zabbix-common-install']
 
 - name: Update apt cache
   apt:
-    update_cache: yes
+    update_cache: true
   when: _zabbix_common__apt_repo_update is changed
   tags: ['zabbix-common', 'zabbix-common-install']
 
 - name: Remove old target package
   apt:
-    name:  '{{ zabbix_common__packages_name }}'
+    name: '{{ zabbix_common__packages_name }}'
     state: absent
   when: _zabbix_common__apt_need_package|d(False)|bool
   tags: ['zabbix-common', 'zabbix-common-install']
 
 - name: 'Install {{ zabbix_common__packages_name }} package'
   apt:
-    name:  '{{ zabbix_common__packages_name }}=1:{{ zabbix_common__version }}*'
+    name: '{{ zabbix_common__packages_name }}=1:{{ zabbix_common__version }}*'
     state: present
   tags: ['zabbix-common', 'zabbix-common-install']
